@@ -21,21 +21,27 @@ class Order:
         return self.quantity if self.buy else - self.quantity
 
 
-
-
-
 class Book:
     def __init__(self,name):
         self.name = name
         self.buyList = list()
         self.sellList = list()
 
-    def __str__(self):
-        for i in range(len(book)):
-            print(repr(book[i]))
+    def __repr__(self):
+        res = "SellList\n"
+        for i in range(len(self.sellList)):
+            res += repr(self.sellList[i])
+            res += "\n"
+        res += "\nBuyList\n"
+        for i in range(len(self.buyList)):
+            res += repr(self.buyList[i])
+            res += "\n"
+        res += "------------------------------"
+        return res
 
     def insertBuy(self, quantity, price):
         order = Order(quantity, price, True)
+        print("--Insert BUY " + repr(order) + " on " + self.name)
         i=0
 
         if not self.sellList: #sellList is empty
@@ -46,17 +52,23 @@ class Book:
                 if order.price >= self.sellList[i].price and order.quantity > 0 : #if we can execute the order
                     if order.quantity - self.sellList[i].quantity >=  0 :
                         order.quantity = order.quantity - self.sellList[i].quantity
+                        print("Execute " +  str(self.sellList[i].quantity) + " at " + str(self.sellList[i].price)  + "\n")
                         self.sellList.pop(i) #delete sell order
-                        self.buyList.append(order) #Add buy order
                     else: # order.quantity - self.sellList[i].quantity < 0
-                        self.sellList[i].quantity = self.sellList[i].quantity - quantity
+                        self.sellList[i].quantity = self.sellList[i].quantity - order.quantity
+                        print("Execute " + str(order.quantity) + " at " + str(self.sellList[i].price) + "\n" )
                         order.quantity = 0
                 else : #we can't execute the order and we just add it to the book
-                    self.buyList.append(order)
-                i= i+1
+                    if order.quantity > 0:
+                        self.buyList.append(order)
+                        self.sortBuyList()
+                    break
+        print(repr(self))
+
     
     def insertSell(self, quantity, price):
         order = Order(quantity, price, False)
+        print("--Insert SELL " + repr(order) + " on " + self.name)
         i = 0
 
         if not self.buyList: #buyList is empty
@@ -68,27 +80,30 @@ class Book:
                     #on execute l'odre
                     if order.quantity - self.buyList[i].quantity >= 0:
                         order.quantity = order.quantity - self.buyList[i].quantity
+                        print("Execute " +  str(self.buyList[i].quantity) + " at " + str(self.buyList[i].price) + "\n")
                         self.buyList.pop(i) #delete buy order
-                        self.sellList.append(order) #add sell order in the book
                     else:
-                        self.buyList[i] = order.quantity - self.buyList[i].quantity
+                        self.buyList[i].quantity = self.buyList[i].quantity - order.quantity 
+                        print("Execute " + str(order.quantity) + " at " + str(self.buyList[i].price) + "\n" )
                         order.quantity = 0
                 else : #we can't execute the order and we just add it to the book
-                    self.sellList.append(order)
-                i = i + 1
+                    if order.quantity > 0:
+                        self.sellList.append(order)
+                        self.sortSellList()
+                    break
+        print(repr(self))
 
     def sortBuyList(self): #We want to sort data in function of price (decreasing) and then id(increasing)
-        self.buyList.sort(key=lambda x : x.price)
+        self.buyList.sort(key=lambda x : x.price, reverse= True)
 
     def sortSellList(self):
-        self.sellList.sort(key=lambda x : x.price, reverse= True)
-    
-book = Book("TEST")
-print(Book)
-book.insertBuy(10, 10.0)
-print(Book)
-book.insertSell(120, 12.0)
-book.insertBuy(5, 10.0)
-book.insertBuy(2, 11.0)
-book.insertSell(1, 10.0)
-book.insertSell(10, 10.0)
+        self.sellList.sort(key=lambda x : x.price, reverse= False)
+
+if __name__ == "__main__":
+    book = Book("TEST")
+    book.insertBuy(10, 10.0)
+    book.insertSell(120, 12.0)
+    book.insertBuy(5, 10.0)
+    book.insertBuy(2, 11.0)
+    book.insertSell(1, 10.0)
+    book.insertSell(10, 10.0)
