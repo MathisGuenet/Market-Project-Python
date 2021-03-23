@@ -43,7 +43,6 @@ class Book:
         order = Order(quantity, price, True)
         print("--Insert BUY " + repr(order) + " on " + self.name)
         i=0
-
         if not self.sellList: #sellList is empty
             self.buyList.append(order)
         else: #sellList is not empty
@@ -70,7 +69,6 @@ class Book:
         order = Order(quantity, price, False)
         print("--Insert SELL " + repr(order) + " on " + self.name)
         i = 0
-
         if not self.buyList: #buyList is empty
             self.sellList.append(order)
         else: #buyList is not empty
