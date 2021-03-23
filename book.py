@@ -1,3 +1,5 @@
+import pandas as pd
+
 class Order:
     id = 0
 
@@ -28,20 +30,20 @@ class Book:
         self.sellList = list()
 
     def __repr__(self):
-        res = "SellList\n"
-        for i in range(len(self.sellList)):
-            res += repr(self.sellList[i])
-            res += "\n"
-        res += "\nBuyList\n"
-        for i in range(len(self.buyList)):
-            res += repr(self.buyList[i])
-            res += "\n"
-        res += "------------------------------"
+        print("---------SellList---------")
+        d = {'quantity':[order.quantity for order in self.sellList], 'price':[order.price for order in self.sellList], 'ID':[order.ID for order in self.sellList]}
+        df_sell = pd.DataFrame(data = d)
+        print(df_sell)
+        print("\n---------BuyList----------")
+        d = {'quantity':[order.quantity for order in self.buyList], 'price':[order.price for order in self.buyList], 'ID':[order.ID for order in self.buyList]}
+        df_buy = pd.DataFrame(data = d)
+        print(df_buy)
+        res = "\n----------------Next Step----------------\n"
         return res
 
     def insertBuy(self, quantity, price):
         order = Order(quantity, price, True)
-        print("--Insert BUY " + repr(order) + " on " + self.name)
+        print("--Insert BUY " + repr(order) + " on " + self.name + "\n")
         i=0
         if not self.sellList: #sellList is empty
             self.buyList.append(order)
@@ -51,11 +53,11 @@ class Book:
                 if order.price >= self.sellList[i].price and order.quantity > 0 : #if we can execute the order
                     if order.quantity - self.sellList[i].quantity >=  0 :
                         order.quantity = order.quantity - self.sellList[i].quantity
-                        print("Execute " +  str(self.sellList[i].quantity) + " at " + str(self.sellList[i].price)  + "\n")
+                        print("Execute " +  str(self.sellList[i].quantity) + " at " + str(self.sellList[i].price))
                         self.sellList.pop(i) #delete sell order
                     else: # order.quantity - self.sellList[i].quantity < 0
                         self.sellList[i].quantity = self.sellList[i].quantity - order.quantity
-                        print("Execute " + str(order.quantity) + " at " + str(self.sellList[i].price) + "\n" )
+                        print("Execute " + str(order.quantity) + " at " + str(self.sellList[i].price))
                         order.quantity = 0
                 else : #we can't execute the order and we just add it to the book
                     if order.quantity > 0:
@@ -67,7 +69,7 @@ class Book:
     
     def insertSell(self, quantity, price):
         order = Order(quantity, price, False)
-        print("--Insert SELL " + repr(order) + " on " + self.name)
+        print("--Insert SELL " + repr(order) + " on " + self.name + "\n")
         i = 0
         if not self.buyList: #buyList is empty
             self.sellList.append(order)
@@ -78,11 +80,11 @@ class Book:
                     #on execute l'odre
                     if order.quantity - self.buyList[i].quantity >= 0:
                         order.quantity = order.quantity - self.buyList[i].quantity
-                        print("Execute " +  str(self.buyList[i].quantity) + " at " + str(self.buyList[i].price) + "\n")
+                        print("Execute " +  str(self.buyList[i].quantity) + " at " + str(self.buyList[i].price))
                         self.buyList.pop(i) #delete buy order
                     else:
                         self.buyList[i].quantity = self.buyList[i].quantity - order.quantity 
-                        print("Execute " + str(order.quantity) + " at " + str(self.buyList[i].price) + "\n" )
+                        print("Execute " + str(order.quantity) + " at " + str(self.buyList[i].price))
                         order.quantity = 0
                 else : #we can't execute the order and we just add it to the book
                     if order.quantity > 0:
